@@ -1,0 +1,365 @@
+openapi: 3.0.1
+info:
+  title: OpenApi RecipeService
+  description: 'This is a CRUD service for Recipes.'
+  contact:
+    email: dontmail@recipeservice.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+servers:
+- url: https://tbd.com/v1
+- url: http://tbd.com/v1
+tags:
+- name: recipe
+  description: Everything about your Recipes
+paths:
+  /recipes:
+    post:
+      tags:
+      - recipe
+      summary: Add a new Recipe to the store
+      operationId: addRecipe
+      requestBody:
+        description: Recipe object that needs to be added to the store
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Recipe'
+        required: true
+      responses:
+        405:
+          description: Invalid input
+          content: {}
+      security:
+      - Recipestore_auth:
+        - write:Recipes
+        - read:Recipes
+      x-codegen-request-body-name: body
+    get:
+      tags:
+      - recipe
+      summary: Finds Recipes by status
+      description: Multiple status values can be provided with comma separated strings
+      operationId: findRecipesByStatus
+      parameters:
+      - name: status
+        in: query
+        description: Status values that need to be considered for filter
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: array
+          items:
+            type: string
+            default: available
+            enum:
+            - available
+            - pending
+            - sold
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Recipe'
+        400:
+          description: Invalid status value
+          content: {}
+      security:
+      - Recipestore_auth:
+        - write:Recipes
+        - read:Recipes
+  /recipes/{RecipeId}:
+    get:
+      tags:
+      - Recipe
+      summary: Find Recipe by ID
+      description: Returns a single Recipe
+      operationId: getRecipeById
+      parameters:
+      - name: RecipeId
+        in: path
+        description: ID of Recipe to return
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Recipe'
+        400:
+          description: Invalid ID supplied
+          content: {}
+        404:
+          description: Recipe not found
+          content: {}
+      security:
+      - api_key: []
+    post:
+      tags:
+      - Recipe
+      summary: Updates a Recipe in the store with form data
+      operationId: updateRecipeWithForm
+      parameters:
+      - name: RecipeId
+        in: path
+        description: ID of Recipe that needs to be updated
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              properties:
+                name:
+                  type: string
+                  description: Updated name of the Recipe
+                status:
+                  type: string
+                  description: Updated status of the Recipe
+      responses:
+        405:
+          description: Invalid input
+          content: {}
+      security:
+      - Recipestore_auth:
+        - write:Recipes
+        - read:Recipes
+    put:
+      tags:
+      - recipe
+      summary: Update an existing recipe
+      operationId: updateRecipe
+      parameters:
+      - name: RecipeId
+        in: path
+        description: ID of Recipe that needs to be updated
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        description: Recipe object that needs to be added to the recipe list
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Recipe'
+        required: true
+      responses:
+        400:
+          description: Invalid ID supplied
+          content: {}
+        404:
+          description: Recipe not found
+          content: {}
+        405:
+          description: Validation exception
+          content: {}
+      security:
+      - Recipestore_auth:
+        - write:Recipes
+        - read:Recipes
+      x-codegen-request-body-name: body
+    delete:
+      tags:
+      - Recipe
+      summary: Deletes a Recipe
+      operationId: deleteRecipe
+      parameters:
+      - name: api_key
+        in: header
+        schema:
+          type: string
+      - name: RecipeId
+        in: path
+        description: Recipe id to delete
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        400:
+          description: Invalid ID supplied
+          content: {}
+        404:
+          description: Recipe not found
+          content: {}
+      security:
+      - Recipestore_auth:
+        - write:Recipes
+        - read:Recipes
+  /recipes/{RecipeId}/reviews:
+    post:
+      summary: Creates a review of a recipe
+      operationId: reviewRecipe
+      parameters:
+      - name: RecipeId
+        in: path
+        description: ID of Recipe to review
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Review'
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+      security:
+      - Recipestore_auth:
+        - write:Recipes
+        - read:Recipes
+  /ingredients/unitOfMeasureTypes:
+    get:
+      summary: Finds unit of measure types for Recipe ingredients
+      operationId: findUnitOfMeasureTypes
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+        400:
+          description: Invalid tag value
+          content: {}
+      security:
+      - Recipestore_auth:
+        - write:Recipes
+        - read:Recipes
+components:
+  schemas:
+    Recipe:
+      required:
+      - name
+      - shortDescription
+      - description
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+          example: Lasagna
+        shortDescription:
+          type: string
+          example: Lasagna
+        description:
+          type: string
+          example: Lasagna
+        imageUrl:
+          type: string
+        ingredients:
+            type: array
+            items:
+              $ref: '#/components/schemas/Ingredient'
+        steps:
+            type: array
+            items:
+              $ref: '#/components/schemas/PreparationStep'
+        reviews:
+            type: array
+            items:
+              $ref: '#/components/schemas/Review'
+    Ingredient:
+      required:
+      - name
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+          example: Lasagna
+        amount:
+          type: integer
+          format: int64
+        unit:
+          type: string
+          description: unit of measure for the ingredient
+          enum:
+          - Piece
+          - Gram
+          - Miligram
+          - Kilogram
+          - Liter
+          - Mililiter
+          - Centiliter
+    PreparationStep:
+      required:
+      - description
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        description:
+          type: string
+          example: Put the lasagna in the oven
+        rank:
+          type: integer
+          format: int64
+    Review:
+      required:
+      - reviewer
+      - body
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        recipeId:
+          type: integer
+          format: int64
+        reviewer:
+          type: string
+          example: Marc
+        body:
+          type: string
+          example: Great recipe!
+    ApiResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        type:
+          type: string
+        message:
+          type: string
+  securitySchemes:
+    Recipestore_auth:
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: http://Recipestore.swagger.io/oauth/dialog
+          scopes:
+            write:Recipes: modify Recipes in your account
+            read:Recipes: read your Recipes
+    api_key:
+      type: apiKey
+      name: api_key
+      in: header
