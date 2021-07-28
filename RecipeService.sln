@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31410.357
 MinimumVisualStudioVersion = 15.0.26124.0
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Recipes.Api", "Recipe.Api\Recipes.Api.csproj", "{78059F9F-707F-4544-B4CA-987E00457A91}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Recipes.Api", "Recipes.Api\Recipes.Api.csproj", "{78059F9F-707F-4544-B4CA-987E00457A91}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Recipes.Core", "Recipe.Core\Recipes.Core.csproj", "{61CFD51E-5E68-4DF7-B866-C88ACE5820C2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Recipes.Core", "Recipes.Core\Recipes.Core.csproj", "{61CFD51E-5E68-4DF7-B866-C88ACE5820C2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Recipes.Infrastructure", "Recipes.Infrastructure\Recipes.Infrastructure.csproj", "{A91F1A20-390A-49D1-A899-9BCF632617AD}"
 EndProject

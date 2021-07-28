@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Recipe.Core\Recipes.Core.csproj" />
+    <ProjectReference Include="..\Recipes.Core\Recipes.Core.csproj" />
   </ItemGroup>
 
 </Project>
