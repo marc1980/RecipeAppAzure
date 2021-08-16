@@ -6,8 +6,8 @@ namespace Recipes.Core.Application.Contracts
 {
     public interface IRecipeRepository
     {
-        Task AddAsync(Recipe recipe);
-        void UpdateAsync(Recipe recipe);
+        Task<Recipe> AddAsync(Recipe recipe);
+        Task UpdateAsync(Recipe recipe);
         Task<Recipe> GetAsync(string recipeId);
         Task<IEnumerable<Recipe>> GetItemsAsync(string queryString);
     }

@@ -14,7 +14,9 @@ namespace Recipes.Api
         public static void Main()
         {
             var host = new HostBuilder()
-                .ConfigureFunctionsWorkerDefaults()
+                .ConfigureFunctionsWorkerDefaults(w => 
+                    w.UseMiddleware<ExceptionHandler>()
+                )
                 .ConfigureServices(s =>
                 {
                     // s.AddLogging();

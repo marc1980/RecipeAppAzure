@@ -17,12 +17,13 @@ namespace Recipes.Infrastructure.Repositories
             container = dbClient.GetContainer(databaseName, containerName);
         }
 
-        public async Task AddAsync(Recipe recipe)
+        public async Task<Recipe> AddAsync(Recipe recipe)
         {
-            await container.CreateItemAsync<Recipe>(recipe, new PartitionKey(recipe.Id));
+            var response = await container.CreateItemAsync<Recipe>(recipe, new PartitionKey(recipe.Id));
+            return response.Resource;
         }
 
-        public async void UpdateAsync(Recipe recipe)
+        public async Task UpdateAsync(Recipe recipe)
         {
             await container.UpsertItemAsync<Recipe>(recipe, new PartitionKey(recipe.Id));
         }        
@@ -31,7 +32,7 @@ namespace Recipes.Infrastructure.Repositories
         {
             try
             {
-                ItemResponse<Recipe> response = await container.ReadItemAsync<Recipe>(recipeId, new PartitionKey(recipeId));
+                var response = await container.ReadItemAsync<Recipe>(recipeId, new PartitionKey(recipeId));
                 return response.Resource;
             }
             catch (CosmosException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)

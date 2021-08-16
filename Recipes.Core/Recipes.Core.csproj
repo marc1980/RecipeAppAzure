@@ -7,6 +7,8 @@
   <ItemGroup>
     <Folder Include="Application\Features\Recipes\Commands\UpdateRecipe\" />
     <Folder Include="Application\Features\Recipes\Queries\" />
+    <Folder Include="Application\Features\Recipes\Queries\GetRecipeDetails\" />
+    <Folder Include="Application\Features\Recipes\Queries\GetRecipesList\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -15,4 +17,8 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="Application\Features\Recipes\Queries\GetRecipe\" />
+    <None Remove="Application\Features\Recipes\Queries\GetRecipesList\" />
+  </ItemGroup>
 </Project>

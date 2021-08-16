@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using MediatR;
+﻿using MediatR;
+using Recipes.Core.Domain.Entities;
 
 namespace Recipes.Core.Application.Features.Recipes.Commands.CreateRecipe
 {
-    public class CreateRecipeCommand : IRequest<bool>
+    public class CreateRecipeCommand : IRequest<Recipe>
     {
         public string Name { get; set; }
         public string ShortDescription { get; set; }

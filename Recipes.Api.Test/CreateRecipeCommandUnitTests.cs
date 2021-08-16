@@ -46,10 +46,10 @@ namespace Recipes.Api.Test
 
         [TestMethod]
         [ExpectedException(typeof(ValidationException))]
-        public async Task CreateRecipeCommandValidator_Throws_ValidationException()
+        public async Task CreateRecipeCommandValidator_without_name_throws_ValidationException()
         {
             // arrange
-            var command = new CreateRecipeCommand
+            var commandWithoutName = new CreateRecipeCommand
             {
                 Description = "Recipe description",
                 ShortDescription = "Recipe short description",
@@ -59,11 +59,10 @@ namespace Recipes.Api.Test
             };
 
             // act
-            await commandHandler.Handle(command, new CancellationToken());
+            await commandHandler.Handle(commandWithoutName, new CancellationToken());
 
             // assert
             // FluenValidation.ValidationException
         }
-
     }
 }

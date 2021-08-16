@@ -29,9 +29,12 @@ paths:
               $ref: '#/components/schemas/Recipe'
         required: true
       responses:
-        405:
+        200:
+          description: Recipe created
+        400:
           description: Invalid input
-          content: {}
+          content: 
+            $ref: '#/components/schemas/Errors'
       security:
       - Recipestore_auth:
         - write:Recipes
@@ -40,37 +43,18 @@ paths:
     get:
       tags:
       - recipe
-      summary: Finds Recipes by status
-      description: Multiple status values can be provided with comma separated strings
-      operationId: findRecipesByStatus
-      parameters:
-      - name: status
-        in: query
-        description: Status values that need to be considered for filter
-        required: true
-        style: form
-        explode: true
-        schema:
-          type: array
-          items:
-            type: string
-            default: available
-            enum:
-            - available
-            - pending
-            - sold
+      summary: List Recipes
+      description: List all available recipes
       responses:
         200:
-          description: successful operation
+          description: Ok
           content:
             application/json:
               schema:
                 type: array
-                items:
-                  $ref: '#/components/schemas/Recipe'
-        400:
-          description: Invalid status value
-          content: {}
+                $ref: '#/components/schemas/Recipe'
+        204:
+          description: No recipes found
       security:
       - Recipestore_auth:
         - write:Recipes
@@ -92,51 +76,16 @@ paths:
           format: int64
       responses:
         200:
-          description: successful operation
+          description: Recipe found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Recipe'
-        400:
-          description: Invalid ID supplied
-          content: {}
         404:
           description: Recipe not found
           content: {}
       security:
       - api_key: []
-    post:
-      tags:
-      - Recipe
-      summary: Updates a Recipe in the store with form data
-      operationId: updateRecipeWithForm
-      parameters:
-      - name: RecipeId
-        in: path
-        description: ID of Recipe that needs to be updated
-        required: true
-        schema:
-          type: integer
-          format: int64
-      requestBody:
-        content:
-          application/x-www-form-urlencoded:
-            schema:
-              properties:
-                name:
-                  type: string
-                  description: Updated name of the Recipe
-                status:
-                  type: string
-                  description: Updated status of the Recipe
-      responses:
-        405:
-          description: Invalid input
-          content: {}
-      security:
-      - Recipestore_auth:
-        - write:Recipes
-        - read:Recipes
     put:
       tags:
       - recipe
@@ -158,14 +107,17 @@ paths:
               $ref: '#/components/schemas/Recipe'
         required: true
       responses:
-        400:
-          description: Invalid ID supplied
+        200:
+          description: Recipe changed
           content: {}
+        400:
+          description: Invalid recipe
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
         404:
           description: Recipe not found
-          content: {}
-        405:
-          description: Validation exception
           content: {}
       security:
       - Recipestore_auth:
@@ -178,10 +130,6 @@ paths:
       summary: Deletes a Recipe
       operationId: deleteRecipe
       parameters:
-      - name: api_key
-        in: header
-        schema:
-          type: string
       - name: RecipeId
         in: path
         description: Recipe id to delete
@@ -190,8 +138,8 @@ paths:
           type: integer
           format: int64
       responses:
-        400:
-          description: Invalid ID supplied
+        204:
+          description: Recipe deleted
           content: {}
         404:
           description: Recipe not found
@@ -219,11 +167,14 @@ paths:
               $ref: '#/components/schemas/Review'
       responses:
         200:
-          description: successful operation
+          description: Review created
+          content: {}
+        400:
+          description: Review invalid
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiResponse'
+                $ref: '#/components/schemas/Errors'
       security:
       - Recipestore_auth:
         - write:Recipes
@@ -234,16 +185,13 @@ paths:
       operationId: findUnitOfMeasureTypes
       responses:
         200:
-          description: successful operation
+          description: Units of measure found
           content:
             application/json:
               schema:
                 type: array
                 items:
                   type: string
-        400:
-          description: Invalid tag value
-          content: {}
       security:
       - Recipestore_auth:
         - write:Recipes
@@ -340,8 +288,8 @@ components:
         body:
           type: string
           example: Great recipe!
-    ApiResponse:
-      type: object
+    Errors:
+      type: array
       properties:
         code:
           type: integer
