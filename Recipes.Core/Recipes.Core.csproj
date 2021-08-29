@@ -6,12 +6,11 @@
 
   <ItemGroup>
     <Folder Include="Application\Features\Recipes\Commands\UpdateRecipe\" />
-    <Folder Include="Application\Features\Recipes\Queries\" />
-    <Folder Include="Application\Features\Recipes\Queries\GetRecipeDetails\" />
-    <Folder Include="Application\Features\Recipes\Queries\GetRecipesList\" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="10.1.1" />
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
     <PackageReference Include="FluentValidation.AspNetCore" Version="10.3.0" />
     <PackageReference Include="MediatR" Version="9.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />

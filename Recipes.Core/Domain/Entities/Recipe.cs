@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿using System.Collections.Generic;
+using Newtonsoft.Json;
+using System.Linq;
 
 namespace Recipes.Core.Domain.Entities
 {
@@ -12,15 +14,21 @@ namespace Recipes.Core.Domain.Entities
         public string ImageUrl { get; set; }
         public int PreparationTime { get; set; }
         public int Portions { get; set; }
-        //public virtual IEnumerable<Ingredient> Ingredients { get; set; }
-        //public virtual IEnumerable<PreparationStep> Steps { get; set; }
-        //public virtual IEnumerable<Review> Reviews { get; set; }
+        public IEnumerable<Ingredient> Ingredients { get; set; }
+        public IEnumerable<PreparationStep> PreparationSteps { get; set; }
+        public IEnumerable<Review> Reviews { get; private set; }
 
         public Recipe()
         {
-            //Ingredients = new List<Ingredient>();
-            //Steps = new List<PreparationStep>();
-            //Reviews = new List<Review>();
+            Ingredients = new List<Ingredient>();
+            PreparationSteps = new List<PreparationStep>();
+            Reviews = new List<Review>();
+        }
+
+        public void AddReview(Review review)
+        {
+            Reviews = Reviews.Append(review);
+            return;
         }
     }
 }

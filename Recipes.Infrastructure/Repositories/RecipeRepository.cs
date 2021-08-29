@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using Microsoft.Azure.Cosmos;
 using Recipes.Core.Application.Contracts;
 using Recipes.Core.Domain.Entities;
+using Recipes.Core.Application.Features.Recipes.Queries.GetRecipesList;
+using Recipes.Core.Application.Exceptions;
 
 namespace Recipes.Infrastructure.Repositories
 {
@@ -37,18 +39,23 @@ namespace Recipes.Infrastructure.Repositories
             }
             catch (CosmosException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
             {
-                return null;
+                throw new RecipeNotFoundInRepositoryException(recipeId);
             }
         }
 
-        public async Task<IEnumerable<Recipe>> GetItemsAsync(string queryString)
+        public async Task<IEnumerable<RecipeSummaryDto>> GetItemsAsync(int page, int pageSize)
         {
-            var query = container.GetItemQueryIterator<Recipe>(new QueryDefinition(queryString));
-            var results = new List<Recipe>();
+            var query = container.GetItemQueryIterator<RecipeSummaryDto>(
+                new QueryDefinition("SELECT r.id, r.Name, r.ShortDescription FROM Recipes r OFFSET @skip LIMIT @take")
+                    .WithParameter("@skip", (page -1) * pageSize) 
+                    .WithParameter("@take", pageSize), 
+                null, 
+                new QueryRequestOptions { ConsistencyLevel = ConsistencyLevel.Session, MaxItemCount = pageSize });
+            
+            var results = new List<RecipeSummaryDto>();
             while (query.HasMoreResults)
             {
                 var response = await query.ReadNextAsync();
-
                 results.AddRange(response.ToList());
             }
 

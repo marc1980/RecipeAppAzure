@@ -7,9 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Recipes.Api", "Recipes.Api\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Recipes.Core", "Recipes.Core\Recipes.Core.csproj", "{61CFD51E-5E68-4DF7-B866-C88ACE5820C2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Recipes.Infrastructure", "Recipes.Infrastructure\Recipes.Infrastructure.csproj", "{A91F1A20-390A-49D1-A899-9BCF632617AD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Recipes.Infrastructure", "Recipes.Infrastructure\Recipes.Infrastructure.csproj", "{A91F1A20-390A-49D1-A899-9BCF632617AD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Recipes.Core.Test", "Recipes.Api.Test\Recipes.Core.Test.csproj", "{CE62AE32-E56E-4FB3-9A88-3CCF9B60739C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Recipes.Core.Test", "Recipes.Api.Test\Recipes.Core.Test.csproj", "{CE62AE32-E56E-4FB3-9A88-3CCF9B60739C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

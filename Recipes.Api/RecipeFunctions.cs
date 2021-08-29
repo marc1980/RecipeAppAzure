@@ -1,14 +1,16 @@
-using System.IO;
-using System.Net;
+using System;
+using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Threading.Tasks;
-using FluentValidation;
 using MediatR;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
+using Recipes.Core.Application.Features.Recipes.Commands.AddReview;
 using Recipes.Core.Application.Features.Recipes.Commands.CreateRecipe;
 using Recipes.Core.Application.Features.Recipes.Commands.UpdateRecipe;
+using Recipes.Core.Application.Features.Recipes.Queries.GetRecipeDetails;
+using Recipes.Core.Application.Features.Recipes.Queries.GetRecipesList;
 
 namespace Recipes.Api
 {
@@ -26,42 +28,53 @@ namespace Recipes.Api
         }
 
         [Function("AddRecipe")]
-        public async Task<HttpResponseData> Run(
+        public async Task<HttpResponseData> AddRecipe(
             [HttpTrigger(AuthorizationLevel.Function, "post", Route = "recipes")]
             HttpRequestData req)
         {
-            string requestBody = new StreamReader(req.Body).ReadToEnd();
-            var command = JsonConvert.DeserializeObject<CreateRecipeCommand>(requestBody);
-
-
-            return await functionExecutor.ExecuteAsync(req, async () =>
-            {
-                return await mediator.Send(command);
-            });
+            var command = req.GetCommand<CreateRecipeCommand>();
+            return await functionExecutor.ExecuteAsync(req, async () => await mediator.Send(command));
 
         }
 
         [Function("UpdateRecipe")]
-        public HttpResponseData Run(
+        public async Task<HttpResponseData> UpdateRecipe(
             [HttpTrigger(AuthorizationLevel.Function, "put", Route = "recipes/{id}")]
             HttpRequestData req,
             string id)
         {
-            string requestBody = new StreamReader(req.Body).ReadToEnd();
-            var command = JsonConvert.DeserializeObject<UpdateRecipeCommand>(requestBody);
+            var command = req.GetCommand<UpdateRecipeCommand>();
+            return await functionExecutor.ExecuteAsync(req, async () => await mediator.Send(command));
+        }
 
-            var response = req.CreateResponse();
-            response.Headers.Add("Content-Type", "application/json");
-            
-            if (command.Id != id) 
-            {
-                response.StatusCode = HttpStatusCode.BadRequest;
-                return response;
-            }
+        [Function("GetRecipe")]
+        public async Task<HttpResponseData> GetRecipe(
+            [HttpTrigger(AuthorizationLevel.Function, "get", Route = "recipes/{id}")]
+            HttpRequestData req,
+            string id)
+        {
+            return await functionExecutor.ExecuteAsync(req, async () => await mediator.Send(new GetRecipeDetailsQuery { Id = id }));
+        }
 
-            var succes = mediator.Send(command).Result;
-                
-            return response;
+        [Function("GetRecipeList")]
+        public async Task<HttpResponseData> GetRecipeList(
+            [HttpTrigger(AuthorizationLevel.Function, "get", Route = "recipes")]
+            HttpRequestData req)
+        {
+            var page = req.GetFromQueryParametersOrDefault("page", 1);
+            var pageSize = req.GetFromQueryParametersOrDefault("pageSize", 10);
+
+            return await functionExecutor.ExecuteAsync(req, async () => await mediator.Send(new GetRecipeListQuery() { Page = page, PageSize = pageSize }));
+        }
+
+        [Function("AddReview")]
+        public async Task<HttpResponseData> AddReview(
+            [HttpTrigger(AuthorizationLevel.Function, "post", Route = "recipes/{id}/review")]
+            HttpRequestData req,
+            string id)
+        {
+            var command = req.GetCommand<AddReviewCommand>();
+            return await functionExecutor.ExecuteAsync(req, async () => await mediator.Send(command));
         }
     }
 }

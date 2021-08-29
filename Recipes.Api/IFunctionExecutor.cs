@@ -6,8 +6,8 @@ namespace Recipes.Api
 {
     public interface IFunctionExecutor
     {
-        public Task<HttpResponseData> ExecuteAsync(
+        public Task<HttpResponseData> ExecuteAsync<T>(
             HttpRequestData req,
-            Func<Task<HttpResponseData>> func);
+            Func<Task<T>> func);
     }
 }

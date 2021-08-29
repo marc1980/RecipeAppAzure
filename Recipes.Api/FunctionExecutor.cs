@@ -8,12 +8,11 @@ namespace Recipes.Api
 {
     public class FunctionExecutor : IFunctionExecutor
     {
-        public async Task<HttpResponseData> ExecuteAsync(
+        public async Task<HttpResponseData> ExecuteAsync<T>(
             HttpRequestData req,
-            Func<Task<HttpResponseData>> func)
+            Func<Task<T>> func)
         {
             var response = req.CreateResponse();
-            response.Headers.Add("Content-Type", "application/json");
 
             try
             {
@@ -21,12 +20,12 @@ namespace Recipes.Api
                 var result = await func();
                 await response.WriteAsJsonAsync(result);
             }
-            catch (ValidationException ve)
+            catch (ValidationApiException ve)
             {
-                response.StatusCode = HttpStatusCode.BadRequest;
                 await response.WriteAsJsonAsync(ve.ValidationErrors);
+                response.StatusCode = HttpStatusCode.BadRequest;
             }
-            catch (NotFoundException)
+            catch (NotFoundApiException)
             {
                 response.StatusCode = HttpStatusCode.NotFound;
             }

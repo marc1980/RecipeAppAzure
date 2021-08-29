@@ -4,42 +4,55 @@ using MediatR;
 using Recipes.Core.Application.Contracts;
 using Recipes.Core.Domain.Entities;
 using Recipes.Core.Application.Exceptions;
+using AutoMapper;
+using Microsoft.Extensions.Logging;
+using System;
 
 namespace Recipes.Core.Application.Features.Recipes.Commands.UpdateRecipe
 {
     public class UpdateRecipeCommandHandler : IRequestHandler<UpdateRecipeCommand, bool>
     {
         private readonly IRecipeRepository recipeRepository;
+        private readonly IMapper mapper;
+        private readonly ILogger<UpdateRecipeCommandHandler> logger;
 
-        public UpdateRecipeCommandHandler(IRecipeRepository recipeRepository)
+        public UpdateRecipeCommandHandler(IRecipeRepository recipeRepository, IMapper mapper, ILogger<UpdateRecipeCommandHandler> logger)
         {
             this.recipeRepository = recipeRepository;
+            this.mapper = mapper;
+            this.logger = logger;
         }
         public async Task<bool> Handle(UpdateRecipeCommand request, CancellationToken cancellationToken)
         {
-            var recipe = await recipeRepository.GetAsync(request.Id);
-
-            if (recipe == null) 
+            try
             {
-                throw new NotFoundException(nameof(Recipe), request.Id);
+                var recipe = await recipeRepository.GetAsync(request.Id);
+
+                var validator = new UpdateRecipeCommandValidator();
+                var validationResult = await validator.ValidateAsync(request, cancellationToken);
+
+                if (!validationResult.IsValid)
+                {
+                    logger.LogError("validation failed");
+                    throw new ValidationApiException(validationResult);
+                }
+
+                mapper.Map(request, recipe, typeof(UpdateRecipeCommand), typeof(Recipe));
+
+                await recipeRepository.UpdateAsync(recipe);
+
+                return true;
             }
-
-            var validator = new UpdateRecipeCommandValidator();
-            var validationResult = await validator.ValidateAsync(request, cancellationToken);
-
-            if (!validationResult.IsValid)
+            catch (RecipeNotFoundInRepositoryException ex)
             {
-                throw new ValidationException(validationResult);
+                logger.LogError(ex.Message);
+                throw new NotFoundApiException(nameof(Recipe), request.Id);
             }
-
-            await recipeRepository.UpdateAsync(new Recipe()
-            {
-                Id = request.Id,
-                Name = request.Name,
-
-            });
-
-            return true;
+            catch (Exception ex)
+            { 
+                logger.LogError(ex.Message);
+                throw;
+            }
         }
     }
 }

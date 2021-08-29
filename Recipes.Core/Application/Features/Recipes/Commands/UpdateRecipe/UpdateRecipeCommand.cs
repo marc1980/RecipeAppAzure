@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using MediatR;
+using Recipes.Core.Domain.Entities;
 
 namespace Recipes.Core.Application.Features.Recipes.Commands.UpdateRecipe
 {
@@ -16,5 +13,7 @@ namespace Recipes.Core.Application.Features.Recipes.Commands.UpdateRecipe
         public string ImageUrl { get; set; }
         public int PreparationTime { get; set; }
         public int Portions { get; set; }
+        public IEnumerable<Ingredient> Ingredients { get; set; }
+        public IEnumerable<PreparationStep> PreparationSteps { get; set; }
     }
 }

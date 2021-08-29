@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Recipes.Core.Application.Features.Recipes.Queries.GetRecipesList;
 using Recipes.Core.Domain.Entities;
 
 namespace Recipes.Core.Application.Contracts
@@ -9,6 +10,6 @@ namespace Recipes.Core.Application.Contracts
         Task<Recipe> AddAsync(Recipe recipe);
         Task UpdateAsync(Recipe recipe);
         Task<Recipe> GetAsync(string recipeId);
-        Task<IEnumerable<Recipe>> GetItemsAsync(string queryString);
+        Task<IEnumerable<RecipeSummaryDto>> GetItemsAsync(int page, int pageSize);
     }
 }
